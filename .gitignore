@@ -1,0 +1,8 @@
+archive/
+data/
+uploads/
+*.pth
+*.csv
+archive.zip
+wardrobe.db
+__pycache__
