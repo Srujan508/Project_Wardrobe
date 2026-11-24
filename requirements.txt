@@ -1,0 +1,22 @@
+# Top-level dependencies. Exact versions used: requirements.lock.txt
+# Install torch/torchvision first from the CUDA index (see README).
+transformers
+huggingface_hub
+pillow
+numpy
+pandas
+pyarrow
+scikit-learn
+matplotlib
+tqdm
+pyyaml
+opencv-python-headless
+rembg[gpu]
+fastapi
+uvicorn
+sqlalchemy
+python-multipart
+joblib
+pytest
+ipykernel
+requests

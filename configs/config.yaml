@@ -1,0 +1,43 @@
+# Project Wardrobe v2: single source of truth for paths and hyperparameters.
+# Every script reads this file; nothing should hardcode a path or a number.
+
+seed: 42
+
+paths:
+  polyvore_root: data/raw/polyvore_outfits      # unpacked Polyvore Outfits dataset
+  split: disjoint                               # official split; never re-split by item
+  processed: data/processed
+  models: models
+  results: results
+
+data:
+  # Categories the app uses. Benchmarks (compat AUC / FITB) use ALL categories
+  # so numbers stay comparable with published papers.
+  app_categories: [tops, bottoms, shoes, outerwear]
+
+encoder:
+  name: patrickjohncyh/fashion-clip
+  batch_size: 64
+  embed_dim: 512
+
+train:
+  batch_size: 256
+  lr: 1.0e-3
+  epochs: 30
+  margin: 0.3
+  early_stop_patience: 5
+  num_positive_pairs: 200000
+  hard_negative_topk: 20
+
+app:
+  model: B                  # trained model name (best validation AUC) in models/; falls back to raw FashionCLIP if missing
+  db: wardrobe.db
+  uploads: uploads
+  remove_background: true
+  # Host names the server answers to (DNS-rebinding / CSRF protection).
+  # Override with env WARDROBE_ALLOWED_HOSTS="host1,host2" (e.g. when serving on a LAN).
+  allowed_hosts: [127.0.0.1, localhost]
+
+logging:
+  experiments_file: results/experiments.jsonl
+  comparison_file: results/comparison.csv

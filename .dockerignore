@@ -1,0 +1,10 @@
+venv/
+data/
+legacy/
+uploads/
+results/
+notebooks/
+tests/
+*.db
+**/__pycache__
+.git

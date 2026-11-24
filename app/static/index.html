@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Outfit suggestions from your own closet.">
+<title>AI Wardrobe Stylist</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f5bd3'/%3E%3Cpath d='M16 8a3 3 0 0 1 3 3c0 1.3-1 2-2 2.6V15l9 6.2c.9.6.5 1.8-.6 1.8H6.6c-1.1 0-1.5-1.2-.6-1.8L15 15v-2.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/app.css">
+<script type="module" src="/static/app.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <div class="brand">
+      <h1>AI Wardrobe Stylist</h1>
+      <p class="tagline">Outfit suggestions from your own closet.</p>
+    </div>
+    <p class="model-badge" id="model-badge" data-state="loading">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="model-text">Connecting…</span>
+    </p>
+  </div>
+  <div class="wrap">
+    <div class="tablist" role="tablist" aria-label="Sections" id="tablist">
+      <button type="button" role="tab" id="tab-styled" aria-controls="panel-styled" aria-selected="true" tabindex="0" data-tab="styled">Get Styled</button>
+      <button type="button" role="tab" id="tab-wardrobe" aria-controls="panel-wardrobe" aria-selected="false" tabindex="-1" data-tab="wardrobe">My Wardrobe</button>
+      <button type="button" role="tab" id="tab-add" aria-controls="panel-add" aria-selected="false" tabindex="-1" data-tab="add">Add Clothes</button>
+      <button type="button" role="tab" id="tab-saved" aria-controls="panel-saved" aria-selected="false" tabindex="-1" data-tab="saved">Saved Outfits</button>
+      <button type="button" role="tab" id="tab-study" aria-controls="panel-study" aria-selected="false" tabindex="-1" data-tab="study" hidden>Style Study</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="banner" id="global-error" role="alert" hidden>
+    <p id="global-error-text"></p>
+    <button type="button" class="btn" id="global-retry">Try again</button>
+  </div>
+</div>
+
+<main id="main" class="wrap" tabindex="-1">
+
+  <!-- ============================================================ Get Styled -->
+  <section class="panel" role="tabpanel" id="panel-styled" aria-labelledby="tab-styled" tabindex="0">
+    <h2 class="panel-title">Get Styled</h2>
+    <p class="panel-lead">Pick an occasion and the weather. Outfits are built only from clothes in your wardrobe.</p>
+    <form class="styled-form" id="styled-form" novalidate>
+      <div class="field">
+        <label for="occasion">Occasion</label>
+        <select id="occasion" name="occasion" disabled><option>any</option></select>
+      </div>
+      <div class="field">
+        <label for="weather">Weather</label>
+        <select id="weather" name="weather" disabled><option>any</option></select>
+      </div>
+      <div class="field">
+        <label for="count">How many outfits</label>
+        <input id="count" name="count" type="number" inputmode="numeric" min="1" max="20" step="1" value="5" required>
+      </div>
+      <div class="field field-submit">
+        <button type="submit" class="btn primary" id="suggest-btn" disabled>
+          <span class="spinner" aria-hidden="true"></span><span class="btn-label">Suggest outfits</span>
+        </button>
+      </div>
+    </form>
+    <p class="field-error" id="count-error" role="alert" hidden></p>
+    <p class="sr-status visually-hidden" id="styled-status" role="status" aria-live="polite"></p>
+    <div id="styled-results" class="outfit-list" aria-busy="false">
+      <div class="empty-state">
+        <p class="empty-title">Ready when you are</p>
+        <p>Choose an occasion and the weather, then press “Suggest outfits”.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ My Wardrobe -->
+  <section class="panel" role="tabpanel" id="panel-wardrobe" aria-labelledby="tab-wardrobe" tabindex="0" hidden>
+    <h2 class="panel-title">My Wardrobe</h2>
+    <p class="panel-lead">Fix any type or color the AI got wrong; suggestions use your corrections.</p>
+    <div class="chips" role="group" aria-label="Filter by category" id="filter-chips"></div>
+    <p class="sr-status visually-hidden" id="wardrobe-status" role="status" aria-live="polite"></p>
+    <div class="error-inline" id="wardrobe-error" role="alert" hidden></div>
+    <div id="wardrobe-grid" class="item-grid" aria-busy="false"></div>
+  </section>
+
+  <!-- ============================================================ Add Clothes -->
+  <section class="panel" role="tabpanel" id="panel-add" aria-labelledby="tab-add" tabindex="0" hidden>
+    <h2 class="panel-title">Add Clothes</h2>
+    <p class="panel-lead">One item per photo. The background is removed and the type and color are detected automatically.</p>
+    <div class="dropzone" id="dropzone">
+      <svg class="dropzone-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p class="dropzone-title">Drop photos here</p>
+      <p class="dropzone-sub">or</p>
+      <label class="btn primary file-btn" for="file-input">Choose photos</label>
+      <input type="file" id="file-input" class="visually-hidden-input" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="file-hint">
+      <p class="hint" id="file-hint">JPEG, PNG or WEBP, up to 15 MB each. You can pick several at once.</p>
+    </div>
+    <p class="note" id="first-upload-note" hidden>
+      The first photo takes longer (around 30 seconds) while the AI models load. Later photos take about a second.
+    </p>
+    <ol class="upload-list" id="upload-list" aria-label="Upload progress"></ol>
+    <p class="sr-status visually-hidden" id="upload-status" role="status" aria-live="polite"></p>
+    <div id="just-added-wrap" hidden>
+      <h3 class="section-title">Just added</h3>
+      <p class="hint">Check each detection and correct it if needed. Changes save immediately.</p>
+      <div id="just-added" class="item-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ Saved -->
+  <section class="panel" role="tabpanel" id="panel-saved" aria-labelledby="tab-saved" tabindex="0" hidden>
+    <h2 class="panel-title">Saved Outfits</h2>
+    <p class="panel-lead">Outfits you kept from Get Styled.</p>
+    <p class="sr-status visually-hidden" id="saved-status" role="status" aria-live="polite"></p>
+    <div class="error-inline" id="saved-error" role="alert" hidden></div>
+    <div id="saved-list" class="outfit-list" aria-busy="false"></div>
+  </section>
+
+  <!-- ============================================================ Style Study -->
+  <section class="panel" role="tabpanel" id="panel-study" aria-labelledby="tab-study" tabindex="0" hidden>
+    <h2 class="panel-title">Style Study</h2>
+    <p class="panel-lead"><strong>Which bottom goes better with this top?</strong>
+      Pick the one you would rather wear; your votes test whether the AI chooses better than chance.</p>
+    <p class="hint kbd-hint">Keyboard: <kbd>←</kbd> left, <kbd>→</kbd> right, <kbd>S</kbd> skip.</p>
+    <div class="error-inline" id="study-error" role="alert" hidden></div>
+    <div class="study" id="study-stage" aria-busy="true">
+      <figure class="study-top">
+        <div class="img-well"><img id="study-top-img" alt="The top" width="300" height="300"></div>
+        <figcaption>This top</figcaption>
+      </figure>
+      <div class="study-choices" role="group" aria-label="Choose a bottom">
+        <button type="button" class="choice" id="study-left" data-choice="left" disabled>
+          <span class="img-well"><img id="study-left-img" alt="Left bottom option" width="300" height="300"></span>
+          <span class="choice-label"><kbd aria-hidden="true">←</kbd> Left</span>
+        </button>
+        <button type="button" class="choice" id="study-right" data-choice="right" disabled>
+          <span class="img-well"><img id="study-right-img" alt="Right bottom option" width="300" height="300"></span>
+          <span class="choice-label">Right <kbd aria-hidden="true">→</kbd></span>
+        </button>
+      </div>
+      <div class="study-actions">
+        <button type="button" class="btn" id="study-skip" data-choice="skip" disabled>Skip <kbd aria-hidden="true">S</kbd></button>
+        <span class="hint" id="study-round" aria-live="off"></span>
+      </div>
+    </div>
+    <p class="sr-status visually-hidden" id="study-status" role="status" aria-live="polite"></p>
+    <section class="study-results" aria-labelledby="study-results-title">
+      <h3 class="section-title" id="study-results-title">Results so far</h3>
+      <dl class="stats" id="study-stats">
+        <div><dt>Votes</dt><dd id="stat-votes">–</dd></div>
+        <div><dt>Preferred the AI pick</dt><dd id="stat-rate">–</dd></div>
+        <div><dt>95% interval</dt><dd id="stat-ci">–</dd></div>
+        <div><dt>Skipped</dt><dd id="stat-skipped">–</dd></div>
+      </dl>
+      <div class="ci-bar" id="ci-bar" aria-hidden="true">
+        <span class="ci-range" id="ci-range"></span><span class="ci-point" id="ci-point"></span><span class="ci-half"></span>
+      </div>
+      <div class="ci-scale" aria-hidden="true"><span>0%</span><span>50% = no preference</span><span>100%</span></div>
+      <p class="study-reading" id="study-reading">Loading results…</p>
+    </section>
+  </section>
+</main>
+
+<footer class="site-footer wrap">
+  <p>Compatibility scores are model estimates learned from Polyvore outfits, not a measure of how good you look.</p>
+</footer>
+
+<dialog class="dialog" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+  <form method="dialog">
+    <h2 id="confirm-title">Delete this item?</h2>
+    <p id="confirm-desc"></p>
+    <div class="dialog-actions">
+      <button type="submit" class="btn" value="cancel" autofocus>Cancel</button>
+      <button type="submit" class="btn danger" value="confirm" id="confirm-ok">Delete</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

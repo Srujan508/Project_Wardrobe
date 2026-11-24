@@ -1,8 +1,31 @@
-archive/
-data/
-uploads/
+# Environments
+venv/
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Data and model artifacts (large; regenerate from scripts)
+/data/
+/models/
+/uploads/
 *.pth
-*.csv
-archive.zip
-wardrobe.db
-__pycache__
+*.pt
+*.npy
+*.pkl
+*.db
+*.zip
+*.tar.gz
+archive/
+
+# Results: keep the tables and plots, ignore scratch
+results/scratch/
+
+*.log
+
+# Secrets
+.env
+wandb/
+
+# Built deployment bundles
+/dist/

@@ -1,0 +1,106 @@
+{
+  "items_total": 152785,
+  "items_invalid": 0,
+  "train": {
+    "outfits": 16995,
+    "items": 71967,
+    "items_shared_with_other_splits": 3840,
+    "invalid_images": 0,
+    "outfit_size_hist": {
+      "2": 346,
+      "3": 1842,
+      "4": 4178,
+      "5": 4850,
+      "6": 3208,
+      "7": 1581,
+      "8": 639,
+      "9": 231,
+      "10": 90,
+      "11": 18,
+      "12": 9,
+      "13": 1,
+      "14": 1,
+      "16": 1
+    },
+    "categories": {
+      "shoes": 13362,
+      "jewellery": 12067,
+      "bags": 11832,
+      "tops": 9136,
+      "bottoms": 7886,
+      "all-body": 5751,
+      "outerwear": 4153,
+      "sunglasses": 3294,
+      "accessories": 1692,
+      "hats": 1676,
+      "scarves": 1118
+    }
+  },
+  "valid": {
+    "outfits": 3000,
+    "items": 14657,
+    "items_shared_with_other_splits": 3790,
+    "invalid_images": 0,
+    "outfit_size_hist": {
+      "2": 52,
+      "3": 316,
+      "4": 722,
+      "5": 866,
+      "6": 568,
+      "7": 302,
+      "8": 107,
+      "9": 45,
+      "10": 11,
+      "11": 9,
+      "12": 1,
+      "14": 1
+    },
+    "categories": {
+      "shoes": 2736,
+      "bags": 2478,
+      "jewellery": 2378,
+      "tops": 1797,
+      "bottoms": 1640,
+      "all-body": 1096,
+      "outerwear": 862,
+      "sunglasses": 712,
+      "hats": 362,
+      "accessories": 339,
+      "scarves": 257
+    }
+  },
+  "test": {
+    "outfits": 15145,
+    "items": 70035,
+    "items_shared_with_other_splits": 93,
+    "invalid_images": 0,
+    "outfit_size_hist": {
+      "2": 754,
+      "3": 2309,
+      "4": 3493,
+      "5": 3663,
+      "6": 2538,
+      "7": 1350,
+      "8": 662,
+      "9": 248,
+      "10": 89,
+      "11": 28,
+      "12": 8,
+      "13": 2,
+      "14": 1
+    },
+    "categories": {
+      "shoes": 13225,
+      "bags": 11688,
+      "jewellery": 10680,
+      "tops": 9005,
+      "bottoms": 7695,
+      "outerwear": 5265,
+      "all-body": 5170,
+      "sunglasses": 2449,
+      "accessories": 1931,
+      "hats": 1529,
+      "scarves": 1398
+    }
+  }
+}

@@ -1,0 +1,4 @@
+split,outfits,items,invalid_images
+train,16995,71967,0
+valid,3000,10876,0
+test,15145,69942,0
